@@ -1,0 +1,117 @@
+(rule
+ (target signal_core_native_chunk.ml)
+ (deps
+  %{lib:lg:stdlib/lg_stdlib_native.state}
+  %{lib:lg-test.sources:test.cljc}
+  %{lib:lg-test.sources:test_native.cljc}
+  ../lg/signal/core.lgi
+  ../lg/signal/core.cljc
+  signal/core_test.cljc
+  %{lib:lg-test.sources:run.cljc}
+  %{lib:lg-test.runtime:lg_test_runtime.cmi}
+  %{lib:lg-test.alcotest:lg_test_alcotest.cmi}
+  %{bin:lg})
+ (action
+  (run
+   %{bin:lg}
+   --target
+   native
+   --compile-files-from
+   %{lib:lg:stdlib/lg_stdlib_native.state}
+   %{lib:lg-test.sources:test.cljc}
+   %{lib:lg-test.sources:test_native.cljc}
+   %{dep:../lg/signal/core.lgi}
+   %{dep:../lg/signal/core.cljc}
+   %{dep:signal/core_test.cljc}
+   %{lib:lg-test.sources:run.cljc}
+   -o
+   %{target})))
+
+(rule
+ (target signal_core_native.ml)
+ (deps
+  %{lib:lg:stdlib/lg_stdlib_native.ml}
+  signal_core_native_chunk.ml)
+ (action
+  (with-stdout-to
+   %{target}
+   (progn
+    (cat %{lib:lg:stdlib/lg_stdlib_native.ml})
+    (cat %{dep:signal_core_native_chunk.ml})))))
+
+(executable
+ (name signal_core_native)
+ (modules signal_core_native)
+ (flags (:standard -w -27-32-37-39-69))
+ (libraries
+  lg.edn-backend.native
+  lg.runtime
+  lg.rrbvec
+  lg-test.runtime
+  lg-test.alcotest))
+
+(rule
+ (target signal_core_melange_chunk.ml)
+ (deps
+  %{lib:lg:stdlib/lg_stdlib_melange.state}
+  %{lib:lg-test.sources:test.cljc}
+  %{lib:lg-test.sources:test_melange.cljc}
+  ../lg/signal/core.lgi
+  ../lg/signal/core.cljc
+  signal/core_test.cljc
+  %{lib:lg-test.sources:run.cljc}
+  %{lib:lg-test.runtime:lg_test_runtime.cmi}
+  %{bin:lg})
+ (action
+  (run
+   %{bin:lg}
+   --target
+   melange
+   --compile-files-from
+   %{lib:lg:stdlib/lg_stdlib_melange.state}
+   %{lib:lg-test.sources:test.cljc}
+   %{lib:lg-test.sources:test_melange.cljc}
+   %{dep:../lg/signal/core.lgi}
+   %{dep:../lg/signal/core.cljc}
+   %{dep:signal/core_test.cljc}
+   %{lib:lg-test.sources:run.cljc}
+   -o
+   %{target})))
+
+(rule
+ (target signal_core_melange.ml)
+ (deps
+  %{lib:lg:stdlib/lg_stdlib_melange.ml}
+  signal_core_melange_chunk.ml)
+ (action
+  (with-stdout-to
+   %{target}
+   (progn
+    (cat %{lib:lg:stdlib/lg_stdlib_melange.ml})
+    (cat %{dep:signal_core_melange_chunk.ml})))))
+
+(melange.emit
+ (target signal-core-melange)
+ (alias signal-core-melange)
+ (module_systems es6)
+ (modules signal_core_melange)
+ (preprocess (pps melange.ppx))
+ (compile_flags -w -27-32-37-39-69)
+ (libraries
+  lg.edn-backend
+  lg.edn-backend.melange
+  lg.runtime
+  lg.rrbvec
+  lg-test.runtime
+  lg-test.melange))
+
+(rule
+ (alias runtest)
+ (deps
+  signal_core_native.exe
+  (alias signal-core-melange)
+  signal-core-melange/test/signal_core_melange.js)
+ (action
+  (progn
+   (run %{exe:signal_core_native.exe})
+   (run node %{dep:signal-core-melange/test/signal_core_melange.js}))))

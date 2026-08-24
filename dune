@@ -1,0 +1,11 @@
+(library
+ (name signal_sources)
+ (public_name signal-lg.sources)
+ (modules))
+
+(install
+ (section lib)
+ (package signal-lg)
+ (files
+  (lg/signal/core.lgi as sources/lg/signal/core.lgi)
+  (lg/signal/core.cljc as sources/lg/signal/core.cljc)))

@@ -1,0 +1,29 @@
+(rule
+ (targets signal_native.ml signal_native.state)
+ (deps
+  %{lib:lg:stdlib/lg_stdlib_native.state}
+  (source_tree .)
+  %{bin:lg})
+ (action
+  (run
+   %{bin:lg}
+   --target native
+   --compile-files-from-state
+   %{lib:lg:stdlib/lg_stdlib_native.state}
+   signal_native.state
+   -o signal_native.ml)))
+
+(rule
+ (targets signal_melange.ml signal_melange.state)
+ (deps
+  %{lib:lg:stdlib/lg_stdlib_melange.state}
+  (source_tree .)
+  %{bin:lg})
+ (action
+  (run
+   %{bin:lg}
+   --target melange
+   --compile-files-from-state
+   %{lib:lg:stdlib/lg_stdlib_melange.state}
+   signal_melange.state
+   -o signal_melange.ml)))

@@ -16,7 +16,7 @@
    %{bin:lg}
    --target
    native
-   --compile-files-from
+   --compile-files-chunk-from
    %{lib:lg:stdlib/lg_stdlib_native.state}
    %{lib:lg-test.sources:test.cljc}
    %{lib:lg-test.sources:test_native.cljc}
@@ -67,7 +67,7 @@
    %{bin:lg}
    --target
    melange
-   --compile-files-from
+   --compile-files-chunk-from
    %{lib:lg:stdlib/lg_stdlib_melange.state}
    %{lib:lg-test.sources:test.cljc}
    %{lib:lg-test.sources:test_melange.cljc}

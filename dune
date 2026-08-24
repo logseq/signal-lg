@@ -3,9 +3,18 @@
  (public_name signal-lg.sources)
  (modules))
 
+(library
+ (name signal_states)
+ (public_name signal-lg.states)
+ (modules))
+
 (install
  (section lib)
  (package signal-lg)
  (files
   (lg/signal/core.lgi as sources/lg/signal/core.lgi)
-  (lg/signal/core.cljc as sources/lg/signal/core.cljc)))
+  (lg/signal/core.cljc as sources/lg/signal/core.cljc)
+  (lg/signal/signal_native.state as states/signal_native.state)
+  (lg/signal/signal_native.ml as states/signal_native.ml)
+  (lg/signal/signal_melange.state as states/signal_melange.state)
+  (lg/signal/signal_melange.ml as states/signal_melange.ml)))

@@ -5,10 +5,20 @@
   (record scheduler
           (effects (atom []))
           (dirty (atom []))
-          (generation-value (atom 0))))
+          (generation-value (atom 0))
+          (last-stabilization-value
+           (atom
+            (record stabilization-diagnostics
+              (stabilization-generation 0)
+              (stabilization-rounds 0)
+              (stabilization-effects 0)
+              (stabilization-dirty-tasks 0))))))
 
 (defn generation [owner]
   (deref (:generation-value owner)))
+
+(defn last-stabilization [owner]
+  (deref (:last-stabilization-value owner)))
 
 (defn enqueue-effect! [owner effect]
   (reset! (:effects owner)
@@ -33,7 +43,10 @@
       true)))
 
 (defn stabilize! [owner]
-  (let [worked (atom false)]
+  (let [worked (atom false)
+        rounds (atom 0)
+        effect-count (atom 0)
+        dirty-count (atom 0)]
     (loop []
       (let [effects (deref (:effects owner))
             dirty (deref (:dirty owner))]
@@ -41,16 +54,26 @@
           true
           (do
             (reset! worked true)
+            (swap! rounds inc)
+            (swap! effect-count + (count effects))
             (reset! (:effects owner) (empty-callbacks))
             (doseq [effect effects]
               (effect))
             (let [pending-dirty (deref (:dirty owner))]
+              (swap! dirty-count + (count pending-dirty))
               (reset! (:dirty owner) (empty-callbacks))
               (doseq [task pending-dirty]
                 (task)))
             (recur)))))
     (when (deref worked)
       (swap! (:generation-value owner) inc))
+    (reset!
+     (:last-stabilization-value owner)
+     (record stabilization-diagnostics
+       (stabilization-generation (generation owner))
+       (stabilization-rounds (deref rounds))
+       (stabilization-effects (deref effect-count))
+       (stabilization-dirty-tasks (deref dirty-count))))
     true))
 
 (defn constant [owner initial]

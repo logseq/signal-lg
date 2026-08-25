@@ -1,9 +1,16 @@
 (ns signal.core)
 
+(type-record stabilization-diagnostics
+  (stabilization-generation :int)
+  (stabilization-rounds :int)
+  (stabilization-effects :int)
+  (stabilization-dirty-tasks :int))
+
 (type-record scheduler
   (effects :ref<vector<fn<bool>>>)
   (dirty :ref<vector<fn<bool>>>)
-  (generation-value :ref<int>))
+  (generation-value :ref<int>)
+  (last-stabilization-value :ref<stabilization-diagnostics>))
 
 (type-record subscription
   (disposed :ref<bool>)
@@ -71,6 +78,8 @@
 (signature signal.core/empty-cleanups :fn<vector<cleanup-entry>>)
 (signature signal.core/empty-subscriptions :fn<vector<subscription>>)
 (signature signal.core/generation :fn<scheduler;int>)
+(signature signal.core/last-stabilization
+  :fn<scheduler;stabilization-diagnostics>)
 (signature signal.core/enqueue-effect! :fn<scheduler;fn<bool>;bool>)
 (signature signal.core/enqueue-dirty! :fn<scheduler;fn<bool>;bool>)
 (signature signal.core/schedule-once! :fn<scheduler;ref<bool>;fn<bool>;bool>)

@@ -69,6 +69,41 @@
     (assert-equal 2 @unary-calls "unary map recomputes once per batch")
     (assert-equal 2 @binary-calls "binary map recomputes once per batch")))
 
+(deftest test-stabilization-diagnostics-count-scheduled-work
+  (let [scheduler (sig/scheduler)
+        source (sig/state scheduler 1)
+        derived (sig/map (fn [value] (* value 2)) (sig/value source))
+        observed (atom [])
+        _subscription
+        (sig/observe
+         derived
+         (fn [value]
+           (swap! observed conj value)
+           true))]
+    (sig/set! source 2)
+    (sig/set! source 3)
+    (sig/stabilize! scheduler)
+    (let [diagnostics (sig/last-stabilization scheduler)]
+      (assert-equal 1 (:stabilization-generation diagnostics)
+                    "work advances one scheduler generation")
+      (assert-equal 2 (:stabilization-rounds diagnostics)
+                    "state publication and derived recomputation use two rounds")
+      (assert-equal 0 (:stabilization-effects diagnostics)
+                    "the update schedules no effects")
+      (assert-equal 2 (:stabilization-dirty-tasks diagnostics)
+                    "batched writes publish once and recompute once"))
+    (assert-equal [2 6] @observed "the derived observer runs only once")
+    (sig/stabilize! scheduler)
+    (let [diagnostics (sig/last-stabilization scheduler)]
+      (assert-equal 1 (:stabilization-generation diagnostics)
+                    "a no-op keeps the scheduler generation")
+      (assert-equal 0 (:stabilization-rounds diagnostics)
+                    "a no-op reports zero rounds")
+      (assert-equal 0 (:stabilization-effects diagnostics)
+                    "a no-op reports zero effects")
+      (assert-equal 0 (:stabilization-dirty-tasks diagnostics)
+                    "a no-op reports zero dirty work"))))
+
 (deftest test-map-rejects-mixed-schedulers
   (let [left (sig/constant (sig/scheduler) 1)
         right (sig/constant (sig/scheduler) 2)

@@ -39,7 +39,7 @@
        owner
        (fn []
          (reset! scheduled false)
-         (task)))
+         (task nil)))
       true)))
 
 (defn stabilize! [owner]
@@ -58,12 +58,12 @@
             (swap! effect-count + (count effects))
             (reset! (:effects owner) (empty-callbacks))
             (doseq [effect effects]
-              (effect))
+              (effect nil))
             (let [pending-dirty (deref (:dirty owner))]
               (swap! dirty-count + (count pending-dirty))
               (reset! (:dirty owner) (empty-callbacks))
               (doseq [task pending-dirty]
-                (task)))
+                (task nil)))
             (recur)))))
     (when (deref worked)
       (swap! (:generation-value owner) inc))
@@ -277,7 +277,7 @@
 (defn- register-cleanup! [scope-value callback]
   (if (deref (:disposed-scope scope-value))
     (do
-      (callback)
+      (callback nil)
       (record subscription
               (disposed (atom true))
               (cancel (fn [] true))))
@@ -331,7 +331,7 @@
     (do
       (reset! (:mounted scope-value) true)
       (doseq [callback (deref (:mount-callbacks scope-value))]
-        (callback))
+        (callback nil))
       true)))
 
 (defn dispose-scope! [scope-value]
@@ -345,7 +345,7 @@
         (dispose-subscription! subscription))
       (when (deref (:mounted scope-value))
         (doseq [callback (deref (:unmount-callbacks scope-value))]
-          (callback)))
+          (callback nil)))
       (reset! (:mounted scope-value) false)
       (reset! (:cleanup-callbacks scope-value) (empty-cleanups))
       (reset! (:owned-subscriptions scope-value) (empty-subscriptions))

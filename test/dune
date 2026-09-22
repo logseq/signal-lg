@@ -4,7 +4,7 @@
   %{lib:lg:stdlib/lg_stdlib_native.state}
   %{lib:lg-test.sources:test.cljc}
   %{lib:lg-test.sources:test_native.cljc}
-  ../lg/signal/core.lgi
+  ../lg/signal/core.mli
   ../lg/signal/core.cljc
   signal/core_test.cljc
   %{lib:lg-test.sources:run.cljc}
@@ -20,7 +20,7 @@
    %{lib:lg:stdlib/lg_stdlib_native.state}
    %{lib:lg-test.sources:test.cljc}
    %{lib:lg-test.sources:test_native.cljc}
-   %{dep:../lg/signal/core.lgi}
+   %{dep:../lg/signal/core.mli}
    %{dep:../lg/signal/core.cljc}
    %{dep:signal/core_test.cljc}
    %{lib:lg-test.sources:run.cljc}
@@ -56,7 +56,7 @@
   %{lib:lg:stdlib/lg_stdlib_melange.state}
   %{lib:lg-test.sources:test.cljc}
   %{lib:lg-test.sources:test_melange.cljc}
-  ../lg/signal/core.lgi
+  ../lg/signal/core.mli
   ../lg/signal/core.cljc
   signal/core_test.cljc
   %{lib:lg-test.sources:run.cljc}
@@ -71,7 +71,7 @@
    %{lib:lg:stdlib/lg_stdlib_melange.state}
    %{lib:lg-test.sources:test.cljc}
    %{lib:lg-test.sources:test_melange.cljc}
-   %{dep:../lg/signal/core.lgi}
+   %{dep:../lg/signal/core.mli}
    %{dep:../lg/signal/core.cljc}
    %{dep:signal/core_test.cljc}
    %{lib:lg-test.sources:run.cljc}

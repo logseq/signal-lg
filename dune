@@ -12,7 +12,7 @@
  (section lib)
  (package signal-lg)
  (files
-  (lg/signal/core.lgi as sources/lg/signal/core.lgi)
+  (lg/signal/core.mli as sources/lg/signal/core.mli)
   (lg/signal/core.cljc as sources/lg/signal/core.cljc)
   (lg/signal/signal_native.state as states/signal_native.state)
   (lg/signal/signal_native.ml as states/signal_native.ml)

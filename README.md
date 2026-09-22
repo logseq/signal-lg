@@ -1,5 +1,11 @@
 # signal-lg
 
+> **Deprecated.** This repository is no longer maintained. The signal runtime
+> is now implemented in OCaml and lives at
+> [logseq/ocaml-signal](https://github.com/logseq/ocaml-signal)
+> (`ocaml-signal` for OCaml consumers; LUI consumes it through `lg-lui` in
+> [logseq/lui](https://github.com/logseq/lui)).
+
 `signal-lg` is a small, statically typed incremental runtime written entirely in
 LG. It provides the Bonsai-lite kernel used by LUI:
 
